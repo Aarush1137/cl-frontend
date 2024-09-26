@@ -1,5 +1,3 @@
-// frontend/src/App.js
-
 import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { AuthContext } from './AuthContext';
 import AuthCard from './components/AuthCard'; 
@@ -16,6 +14,11 @@ function App() {
   const { currentUser } = useContext(AuthContext);
   const [files, setFiles] = useState([]);
 
+  // Determine the base URL based on the environment
+  const baseURL = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000' 
+    : 'https://cl-backend-8ajl.onrender.com';
+
   // Memoized fetchFiles function
   const fetchFiles = useCallback(async () => {
     if (!currentUser) {
@@ -25,7 +28,7 @@ function App() {
 
     try {
       const token = await currentUser.getIdToken();
-      const res = await axios.get('https://cl-backend-8ajl.onrender.com/api/files', {
+      const res = await axios.get(`${baseURL}/api/files`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -34,7 +37,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching files:', error);
     }
-  }, [currentUser]);
+  }, [currentUser, baseURL]);
 
   useEffect(() => {
     fetchFiles();
