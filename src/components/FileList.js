@@ -1,5 +1,3 @@
-// frontend/src/components/FileList.js
-
 import React, { useContext, useState } from 'react';
 import { storage } from '../firebaseConfig';
 import { ref, getDownloadURL } from 'firebase/storage';
@@ -24,6 +22,11 @@ const FileList = ({ files, fetchFiles }) => {
   const { currentUser } = useContext(AuthContext);
   const { showNotification } = useContext(NotificationContext);
   const [loading, setLoading] = useState(false);
+
+  // Determine the base URL based on the environment
+  const baseURL = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000' 
+    : 'https://cl-backend-8ajl.onrender.com';
 
   const handleFileClick = async (file) => {
     try {
@@ -50,7 +53,7 @@ const FileList = ({ files, fetchFiles }) => {
     try {
       const token = await currentUser.getIdToken();
 
-      await axios.delete(`http://localhost:5000/api/files/${fileId}`, {
+      await axios.delete(`${baseURL}/api/files/${fileId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

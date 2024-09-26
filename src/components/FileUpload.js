@@ -1,5 +1,3 @@
-// frontend/src/components/FileUpload.js
-
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext';
@@ -19,6 +17,11 @@ const FileUpload = ({ fetchFiles }) => {
   const { currentUser } = useContext(AuthContext);
   const { showNotification } = useContext(NotificationContext);
   const [loading, setLoading] = useState(false);
+
+  // Determine the base URL based on the environment
+  const baseURL = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000' 
+    : 'https://cl-backend-8ajl.onrender.com';
 
   const handleFileChange = (e) => {
     setFileData(e.target.files[0]);
@@ -42,7 +45,7 @@ const FileUpload = ({ fetchFiles }) => {
     try {
       const token = await currentUser.getIdToken();
 
-      await axios.post('http://localhost:5000/api/files/upload', formData, {
+      await axios.post(`${baseURL}/api/files/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

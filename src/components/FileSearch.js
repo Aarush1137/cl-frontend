@@ -1,5 +1,3 @@
-// frontend/src/components/FileSearch.js
-
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext';
@@ -30,6 +28,11 @@ const FileSearch = () => {
   const { showNotification } = useContext(NotificationContext);
   const [loading, setLoading] = useState(false);
 
+  // Determine the base URL based on the environment
+  const baseURL = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000' 
+    : 'https://cl-backend-8ajl.onrender.com';
+
   const handleSearch = async () => {
     if (!currentUser) {
       showNotification('Please log in to search files.', 'warning');
@@ -41,7 +44,7 @@ const FileSearch = () => {
       const token = await currentUser.getIdToken();
 
       const res = await axios.get(
-        `http://localhost:5000/api/files/search?query=${query}`,
+        `${baseURL}/api/files/search?query=${query}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
